@@ -20,3 +20,6 @@ export function createSetValueAction(type) {
 export function setValueReducer(state, action) {
   state[action.key] = action.value;
 }
+
+export const FETCH_PAGE = Symbol('FETCH_PAGE');
+export const FETCH_KEY = Symbol('FETCH_KEY');

@@ -3,29 +3,35 @@ import { AutoComplete, Input, Space, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../state';
+import { actions as userActions } from '../../user/state';
+import { useHistory } from 'react-router-dom';
 
 function SearchInput() {
   const keyword = useSelector(state => state.search.keyword);
-  const autoCompletes = useSelector(state => state.search.autoCompletes);
   const dispatch = useDispatch();
 
   function setKeyword(value) {
     if (value !== keyword) {
-      console.log(keyword, autoCompletes);
       dispatch(actions.setValue('keyword', value));
       dispatch(actions.fetchAutoComplete(value));
     }
   }
 
-  function gotoUser(value) {
-
+  function goToUser(value) {
+    const user = autoCompletes.find(item => item.name === value);
+    if (user) {
+      dispatch(userActions.setValue('user', user));
+      history.push(`/user/${user.name}`);
+    }
   }
 
+  const autoCompletes = useSelector(state => state.search.autoCompletes);
+  const history = useHistory();
   return (
     <AutoComplete
       value={keyword}
       onChange={setKeyword}
-      onSelect={gotoUser}
+      onSelect={goToUser}
       style={{ width: '100%' }}
       options={autoCompletes.map(item => ({
         value: item.name,
