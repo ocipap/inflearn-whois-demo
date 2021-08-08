@@ -3,53 +3,47 @@ import { AutoComplete, Input, Space, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../state';
-import { actions as userActions } from '../../user/state';
-import { useHistory } from 'react-router-dom';
 
-export default function SearchInput() {
+function SearchInput() {
   const keyword = useSelector(state => state.search.keyword);
+  const autoCompletes = useSelector(state => state.search.autoCompletes);
   const dispatch = useDispatch();
 
   function setKeyword(value) {
     if (value !== keyword) {
+      console.log(keyword, autoCompletes);
       dispatch(actions.setValue('keyword', value));
       dispatch(actions.fetchAutoComplete(value));
     }
   }
 
-  const autoCompletes = useSelector(state => state.search.autoCompletes);
-  console.log('autoCompletes', autoCompletes);
+  function gotoUser(value) {
 
-  const history = useHistory();
-  function goToUser(value) {
-    const user = autoCompletes.find(item => item.name === value);
-    if(user) {
-      dispatch(userActions.setValue('user', user));
-      history.push(`/user/${user.name}`)
-    }
   }
 
   return (
     <AutoComplete
       value={keyword}
       onChange={setKeyword}
-      onSelect={goToUser}
+      onSelect={gotoUser}
       style={{ width: '100%' }}
       options={autoCompletes.map(item => ({
         value: item.name,
         label: (
           <Space>
             <Typography.Text strong>{item.name}</Typography.Text>
-            <Typography.Text type="secondary">{item.department}</Typography.Text>
+            <Typography.Text type={'secondary'}>
+              {item.department}
+            </Typography.Text>
             <Typography.Text>{item.tag}</Typography.Text>
           </Space>
-        )
+        ),
       }))}
       autoFocus
     >
-      <Input size="large" placeholder="input here" prefix={<SearchOutlined/>}/>
+      <Input.Search size="large" placeholder="검색어를 입력해주세요" prefix={<SearchOutlined/>}/>
     </AutoComplete>
-
   );
+};
 
-}
+export default SearchInput;
